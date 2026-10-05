@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run pytest on Python file save",
+      "trigger": "PostFileSave",
+      "description": "Python 파일 저장 시 pytest tests/ 자동 실행 (Kiro University Challenge Lesson 3 — Hooks)",
+      "matcher": "\\.py$",
+      "action": {
+        "type": "command",
+        "command": "cd /Users/kyb/Documents/Krio-Project && .venv/bin/python -m pytest tests/ -q --tb=short 2>&1 | tail -20",
+        "timeout": 60
+      }
+    }
+  ]
+}

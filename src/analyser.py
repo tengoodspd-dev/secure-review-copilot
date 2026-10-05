@@ -154,3 +154,4 @@ def run_analysis(config: dict[str, object]) -> list[Finding]:
                 findings.append(finding)
     findings.sort(key=lambda f: SEVERITY_ORDER[f.severity])
     return findings
+# Hook demo: verify automatic tests after an agent file save. verified

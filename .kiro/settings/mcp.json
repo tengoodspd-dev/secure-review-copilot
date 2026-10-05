@@ -1,9 +1,10 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
     "security-controls": {
-      "command": "python",
-      "args": ["/Users/kyb/Documents/Krio-Project/mcp_server/server.py"],
-      "disabled": false
+      "type": "stdio",
+      "command": "python3",
+      "args": ["${PLUGIN_ROOT}/server.py"]
     }
   }
 }

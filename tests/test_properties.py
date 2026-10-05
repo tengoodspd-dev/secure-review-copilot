@@ -20,33 +20,42 @@ _config_strategy = st.fixed_dictionaries({
 @settings(max_examples=50)
 @given(_config_strategy)
 def test_property_idempotency(config):
-    """Property 1: run_analysis returns the same result for the same input (idempotent)."""
+    """Feature: security-analysis-correctness, Property 1: Idempotency
+
+    run_analysis returns the same result for the same input (idempotent).
+    """
     result1 = run_analysis(config)
     result2 = run_analysis(config)
-    assert result1 == result2, "run_analysis is not idempotent"
+    assert result1 == result2, (
+        f"run_analysis is not idempotent\n"
+        f"result1={result1}\n"
+        f"result2={result2}"
+    )
 
 
 @settings(max_examples=50)
 @given(_config_strategy)
 def test_property_monotonicity(config):
-    """Property 2: adding known-bad keys never decreases the finding count."""
+    """Feature: security-analysis-correctness, Property 2: Monotonicity under weakening."""
     modified = dict(config)
     modified["mfa_enabled"] = False
     modified["storage_encrypted"] = False
     original_count = len(run_analysis(config))
     modified_count = len(run_analysis(modified))
     assert modified_count >= original_count, (
-        f"Monotonicity violated: original={original_count}, modified={modified_count}\n"
-        f"config={config}\nmodified={modified}"
+        f"Monotonicity violated:\n"
+        f"  original config={config!r}  ->  finding count={original_count}\n"
+        f"  mutated config={modified!r}  ->  finding count={modified_count}"
     )
 
 
 @settings(max_examples=50)
 @given(_config_strategy)
 def test_property_severity_membership(config):
-    """Property 3: all findings have a valid Severity enum value."""
+    """Feature: security-analysis-correctness, Property 3: Severity membership invariant."""
     valid_severities = set(Severity)
     for finding in run_analysis(config):
         assert finding.severity in valid_severities, (
-            f"Invalid severity {finding.severity!r} in finding {finding.control_id}"
+            f"Severity membership violated: control_id={finding.control_id!r}, "
+            f"invalid severity={finding.severity!r}"
         )

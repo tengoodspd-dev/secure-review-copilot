@@ -63,8 +63,8 @@ Custom Agent  (.kiro/agents/security-reviewer.md)
 | 1. Spec-driven development | Requirements, design, and tasks authored as Kiro Specs | `.kiro/specs/secure-review-copilot/requirements.md`, `design.md`, `tasks.md` |
 | 2. Steering documents | Architecture, coding conventions, and security policies | `.kiro/steering/architecture.md`, `.kiro/steering/coding.md`, `.kiro/steering/security.md` |
 | 3. Hooks | Auto-run pytest on Python file save | `.kiro/hooks/run-tests-on-save.json` |
-| 4. Property-based testing | 3 Hypothesis properties: idempotency, monotonicity, severity membership | `tests/test_properties.py` |
-| 5. Powers | All analysis runs locally — no external paid APIs or cloud services required at runtime | `src/analyser.py`, `mcp_server/server.py` |
+| 4. Property-based testing | 3 Hypothesis properties linked to REQ-002 via Spec Correctness traceability table | `tests/test_properties.py`, `.kiro/specs/secure-review-copilot/requirements.md` (§ Spec Correctness) |
+| 5. Powers | Packaged as Agent Plugins v1.0.0 Power with `plugin.json`, `mcp.json`, and `skills/security-review/SKILL.md` | `power/plugin.json`, `power/mcp.json`, `power/skills/security-review/SKILL.md` |
 | 6. MCP | Local stdio MCP server with `get_security_controls` and `evaluate_control` tools | `mcp_server/server.py`, `mcp_server/controls.json`, `.kiro/settings/mcp.json` |
 | 7. Custom agents | `security-reviewer` agent with scoped tools, MCP access, and file path restrictions | `.kiro/agents/security-reviewer.md` |
 
@@ -72,9 +72,43 @@ Custom Agent  (.kiro/agents/security-reviewer.md)
 
 ## Powers
 
-SecureReview Copilot runs **entirely offline** after `pip install`. No calls are made to OpenAI, Anthropic, or any paid API at runtime. The "power" layer is the local MCP server — it catalogues security controls and evaluates them on demand, giving the custom agent structured access to domain knowledge without any external dependency.
+SecureReview Copilot ships as a **Kiro Power** packaged to the [Agent Plugins v1.0.0](https://agent-plugins.org) specification.
 
-The MCP server was designed using the **mcp Python SDK** (FastMCP pattern) and registered in `.kiro/settings/mcp.json` so Kiro can invoke it directly from the Security Reviewer agent.
+### Power location
+
+```
+power/
+├── plugin.json                          ← Agent Plugins v1.0.0 manifest
+├── mcp.json                             ← MCP server declaration (security-controls)
+└── skills/
+    └── security-review/
+        └── SKILL.md                     ← Security review skill instructions
+```
+
+### Install the Power in Kiro IDE
+
+1. Open Kiro IDE.
+2. Go to **Powers** panel → **Install from local path**.
+3. Select the `power/` directory in this repository.
+4. Kiro loads the `security-controls` MCP server automatically and activates the `security-review` skill on demand.
+
+Alternatively, copy the `power/` directory to `~/.kiro/powers/secure-review-copilot/` for user-level installation.
+
+### How the Power was used
+
+With the Power installed, the Security Reviewer agent can call MCP tools directly from chat:
+
+```
+# Example: ask the security-reviewer agent to evaluate a config snippet
+"Evaluate this config against all controls:
+ {\"mfa_enabled\": false, \"storage_encrypted\": true, \"open_ports\": [3389]}"
+```
+
+The agent calls `get_security_controls()` to fetch the catalogue, then `evaluate_control()` for each relevant control, and returns a severity-ranked finding list — all without leaving the IDE and without any network calls.
+
+### Note on Lesson 6 (MCP)
+
+The MCP server (`mcp_server/server.py`) and its Kiro-level registration (`.kiro/settings/mcp.json`) are preserved unchanged as the evidence for **Lesson 6**. The Power's `mcp.json` is an additional packaging layer on top of the same server.
 
 ---
 
@@ -115,6 +149,11 @@ The server speaks the MCP stdio protocol. In normal use, Kiro launches it automa
 ├── mcp_server/
 │   ├── controls.json                    # Control catalogue
 │   └── server.py                        # MCP server (Lesson 6)
+├── power/                               # Kiro Power — Agent Plugins v1.0.0 (Lesson 5)
+│   ├── plugin.json                      # Power manifest
+│   ├── mcp.json                         # MCP server declaration
+│   └── skills/security-review/
+│       └── SKILL.md                     # Security review skill
 ├── sample_data/                         # Sample configs for demo
 ├── src/
 │   ├── analyser.py                      # Core analysis engine

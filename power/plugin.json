@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "secure-review-copilot",
+  "version": "1.0.0",
+  "description": "Local security configuration review power for SecureReview Copilot. Provides the security-controls MCP server and a security-review skill to analyse JSON system configurations and surface risk findings.",
+  "author": {
+    "name": "SecureReview Copilot (Kiro University Challenge)"
+  },
+  "keywords": [
+    "security",
+    "review",
+    "configuration",
+    "audit",
+    "risk",
+    "mcp",
+    "controls"
+  ],
+  "license": "MIT"
+}

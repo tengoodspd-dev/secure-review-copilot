@@ -120,3 +120,35 @@ No external paid APIs are required. All analysis logic runs locally.
 - **NF-003 No paid APIs:** No calls to OpenAI, Anthropic, or any paid service at runtime.
 - **NF-004 Single command launch:** `streamlit run src/app.py` starts the full application.
 - **NF-005 Test coverage:** `pytest tests/` must exit 0 with all tests passing.
+
+---
+
+## Spec Correctness — Property-Based Test Traceability
+
+This section maps each requirement to the property-based test that validates it, fulfilling the Kiro Spec Correctness / Property-Based Testing lesson.
+
+Kiro's Spec Correctness feature translates requirements into executable specifications: each acceptance criterion that expresses a universal rule ("for any input X, property Y holds") is directly linked to a Hypothesis property test in `tests/test_properties.py`.
+
+| Requirement | Acceptance Criterion (property) | Property Test | Test Description |
+|-------------|----------------------------------|---------------|------------------|
+| REQ-002 — Security Risk Analysis | Analysing the same config twice returns identical findings | `test_property_idempotency` | For any config dict, `run_analysis(c) == run_analysis(c)` |
+| REQ-002 — Security Risk Analysis | Adding a known-bad key never decreases the finding count | `test_property_monotonicity` | For any config, adding `mfa_enabled=False` + `storage_encrypted=False` never reduces findings |
+| REQ-002 — Security Risk Analysis | Returned severity values are always members of the defined enum | `test_property_severity_membership` | For any config, every `finding.severity in set(Severity)` |
+
+### How to verify
+
+Run the property tests to confirm each requirement property holds across 50 randomised inputs:
+
+```bash
+pytest tests/test_properties.py -v
+```
+
+Expected output:
+```
+tests/test_properties.py::test_property_idempotency          PASSED  ← REQ-002 (idempotency)
+tests/test_properties.py::test_property_monotonicity         PASSED  ← REQ-002 (monotonicity)
+tests/test_properties.py::test_property_severity_membership  PASSED  ← REQ-002 (severity enum)
+```
+
+All three properties passed with `hypothesis==6.131.6` and `pytest==8.3.5` on Python 3.14.
+No new tests were added — the existing tests in `tests/test_properties.py` are the executable specification.

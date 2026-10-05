@@ -1,0 +1,82 @@
+[
+  {
+    "id": "AUTH-01",
+    "title": "MFA Not Enabled",
+    "category": "Authentication",
+    "severity": "CRITICAL",
+    "description": "Multi-factor authentication is disabled, leaving accounts vulnerable to credential theft.",
+    "remediation": "Enable MFA for all user accounts and administrative interfaces.",
+    "check_path": "mfa_enabled",
+    "check_value": false
+  },
+  {
+    "id": "AUTH-02",
+    "title": "Default Credentials In Use",
+    "category": "Authentication",
+    "severity": "HIGH",
+    "description": "Default credentials are still active on the system.",
+    "remediation": "Change all default passwords immediately and enforce a strong password policy.",
+    "check_path": "default_credentials",
+    "check_value": true
+  },
+  {
+    "id": "NET-01",
+    "title": "High-Risk Ports Exposed",
+    "category": "Network",
+    "severity": "HIGH",
+    "description": "High-risk ports (FTP:21, Telnet:23, RDP:3389, VNC:5900) are open.",
+    "remediation": "Close unnecessary ports. Use VPN or bastion host for administrative access.",
+    "check_path": "open_ports",
+    "check_value": null
+  },
+  {
+    "id": "NET-02",
+    "title": "Public Endpoint Without TLS",
+    "category": "Network",
+    "severity": "MEDIUM",
+    "description": "A public-facing endpoint is accessible without TLS encryption.",
+    "remediation": "Enable TLS 1.2+ on all public endpoints.",
+    "check_path": "public_endpoint",
+    "check_value": null
+  },
+  {
+    "id": "ENC-01",
+    "title": "Storage Not Encrypted",
+    "category": "Encryption",
+    "severity": "CRITICAL",
+    "description": "Data at rest is not encrypted.",
+    "remediation": "Enable full-disk or volume-level encryption.",
+    "check_path": "storage_encrypted",
+    "check_value": false
+  },
+  {
+    "id": "ENC-02",
+    "title": "Weak TLS Version",
+    "category": "Encryption",
+    "severity": "HIGH",
+    "description": "An outdated TLS version is in use, which has known vulnerabilities.",
+    "remediation": "Upgrade to TLS 1.2 or 1.3 and disable older versions.",
+    "check_path": "tls_version",
+    "check_value": null
+  },
+  {
+    "id": "LOG-01",
+    "title": "Audit Logging Disabled",
+    "category": "Logging",
+    "severity": "MEDIUM",
+    "description": "Audit logging is not enabled; security events cannot be traced.",
+    "remediation": "Enable audit logging and forward logs to a centralised SIEM.",
+    "check_path": "audit_log_enabled",
+    "check_value": false
+  },
+  {
+    "id": "PATCH-01",
+    "title": "End-of-Life OS Version",
+    "category": "Patching",
+    "severity": "HIGH",
+    "description": "The operating system is end-of-life and no longer receives security patches.",
+    "remediation": "Upgrade to a supported OS version.",
+    "check_path": "os_version",
+    "check_value": null
+  }
+]
