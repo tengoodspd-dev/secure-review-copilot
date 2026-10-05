@@ -1,0 +1,5 @@
+streamlit==1.40.0
+mcp==1.9.4
+pytest==8.3.5
+hypothesis==6.131.6
+matplotlib==3.10.9

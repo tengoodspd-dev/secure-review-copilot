@@ -1,0 +1,12 @@
+{
+  "system_name": "partial-config-server",
+  "mfa_enabled": true,
+  "default_credentials": false,
+  "open_ports": [22, 443, 3389],
+  "public_endpoint": true,
+  "tls_enabled": true,
+  "tls_version": "1.2",
+  "storage_encrypted": false,
+  "audit_log_enabled": false,
+  "os_version": "Ubuntu 20.04"
+}

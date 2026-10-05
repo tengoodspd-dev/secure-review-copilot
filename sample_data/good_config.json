@@ -1,0 +1,12 @@
+{
+  "system_name": "well-configured-server",
+  "mfa_enabled": true,
+  "default_credentials": false,
+  "open_ports": [443],
+  "public_endpoint": true,
+  "tls_enabled": true,
+  "tls_version": "1.3",
+  "storage_encrypted": true,
+  "audit_log_enabled": true,
+  "os_version": "Ubuntu 22.04"
+}
